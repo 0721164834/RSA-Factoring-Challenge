@@ -1,27 +1,42 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Factors Challenge
 
+# Custom factorization function
 factorize() {
     num=$1
-    divisor=2
     factors=()
+    divisor=2
+
+    # While the number is greater than 1
     while [ $num -gt 1 ]; do
-        while [ $(($num % $divisor)) -eq 0 ]; do
-            factors+=($divisor)
-            num=$(($num / $divisor))
+        # If the number is divisible by the current divisor
+        while [ $((num % divisor)) -eq 0 ]; do
+            factors+=($divisor)  # Add divisor to factors
+            num=$((num / divisor))  # Divide the number by the divisor
         done
-        divisor=$((divisor + 1))
+        divisor=$((divisor + 1))  # Move to the next divisor
     done
+
+    # Output the factors
     echo "${factors[@]}"
 }
 
+# Main function
 main() {
     filename=$1
-    while IFS= read -r line; do
-        num="$line"
-        factors=$(factorize "$num")
-        echo "$num=${factors[*]}"
+
+    # Read each number from the file
+    while read -r number; do
+        # Factorize the number using custom function
+        factors=$(factorize "$number")
+        echo "$number=${factors[*]}"
     done < "$filename"
 }
 
-main "$1"
-
+# Check for the correct number of arguments
+if [ $# -ne 1 ]; then
+    echo 'Usage: factors <file>'
+    exit 1
+else
+    main "$1"
+fi
